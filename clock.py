@@ -8,6 +8,10 @@ except ImportError:
 
 
 CMD = '>>> '
+_R = '\x1b[31m'
+_G = '\x1b[32m'
+_B = '\x1b[34m'
+_0 = '\x1b[0m'
 
 
 class Relogio(Thread):
@@ -60,23 +64,7 @@ class Relogio(Thread):
         self.S = segundo
 
     def configurar(self):
-        self.configurando = True  # ----
-        print('Configuração',
-              '[1] Definir HH:MM',
-              '[2] Modo GUI' if GUI else '',
-              sep="")
-
-        op = input(CMD)
-        if op == '1':
-            print(
-                "[h] h para definir a hora, [m] m para definir minutos, [t] Definir hora e minuto.")
-            sub_op = input(CMD).strip().lower()
-            self.op_span = 'H' if sub_op == 'h' else 'M' if sub_op == 'm' else 'H:M' if sub_op == 't' else None
-            if sub_op and sub_op in 'hmt':
-                tmp = input(f'[{self.op_span}]: ').strip()
-
-        elif op == 'v':
-            print(f'Horário [{self.string_tempo()}]')
+        self.configurando = True
 
     def run(self):  # lista de processos a serem iniciados em thread
         self.atualizar_hora()
@@ -105,7 +93,8 @@ r2.start()
 
 try:
     while True:
-        print(f'Relógio um   [{r1}]\nRelógio dois [{r2}]', end="\r\n\n")
+        print(
+            f'{_R}R[1] [{r1}]\nR[2] [{r2}]', end=f"\r\n\n{_0}")
 
         print(
             'Digite:'
