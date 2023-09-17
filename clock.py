@@ -84,6 +84,13 @@ class Relogio(Thread):
     def stop(self):
         self.estado = False
 
+    def resume(self):
+        """Liga o contador interno se estiver desligado
+        """
+        if not self.estado:
+            self.atualizar_hora()
+            self.estado = True
+
     def __str__(self) -> str:
         return self.string_tempo()
 
