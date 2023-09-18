@@ -14,6 +14,8 @@ _G = '\x1b[32m'
 _B = '\x1b[34m'
 _0 = '\x1b[0m'
 
+v_erro = 'Valor inválido'
+
 
 class Relogio(Thread):
     H = 0
@@ -99,7 +101,7 @@ r2.start()
 try:
     while True:
         print(
-            f'R[1] {_R}[{r1}]\n{_0}R[2] {_R}[{r2}]', end=f"\r\n\n{_0}")
+            f'R[1] {_R}[{r1}]\n{_0}R[2] {_B}[{r2}]', end=f"\r\n\n{_0}")
 
         print(
             'Digite:',
@@ -126,11 +128,18 @@ try:
             if sub_op:
                 if sub_op[0] == 'h':
                     print("Digite a hora [HH]")
-                    h = int(input(CMD))
-                    conf.definir_hora(h)
+                    try:
+                        h = int(input(CMD))
+                        conf.definir_hora(h)
+                    except ValueError:
+                        print(v_erro)
                 elif sub_op[0] == 'm':
-                    print("Digite o minuto [MM]")
-                    m = int(input(CMD))
+                    try:
+                        print("Digite o minuto [MM]")
+                        m = int(input(CMD))
+                    except ValueError:
+                        print(v_erro)
+
                 elif sub_op[0] == 't':
                     print("Digite o horário [HH:MM]")
                     t = input(CMD).strip().split(':')
