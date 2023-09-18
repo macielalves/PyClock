@@ -14,7 +14,9 @@ _G = '\x1b[32m'
 _B = '\x1b[34m'
 _0 = '\x1b[0m'
 
-v_erro = 'Valor inválido'
+V_ERROR = 'Valor inválido'
+I_ERROR = 'Falta de valores'
+NONE_UPDATE = 'Nenhuma alteração foi feita'
 
 
 class Relogio(Thread):
@@ -101,7 +103,7 @@ r2.start()
 try:
     while True:
         print(
-            f'R[1] {_R}[{r1}]\n{_0}R[2] {_B}[{r2}]', end=f"\r\n\n{_0}")
+            f'R[1] {_G}[{r1}]\n{_0}R[2] {_B}[{r2}]', end=f"\r\n\n{_0}")
 
         print(
             'Digite:',
@@ -132,20 +134,26 @@ try:
                         h = int(input(CMD))
                         conf.definir_hora(h)
                     except ValueError:
-                        print(v_erro)
+                        print(V_ERROR)
                 elif sub_op[0] == 'm':
                     try:
                         print("Digite o minuto [MM]")
                         m = int(input(CMD))
                     except ValueError:
-                        print(v_erro)
+                        print(V_ERROR)
 
                 elif sub_op[0] == 't':
                     print("Digite o horário [HH:MM]")
                     t = input(CMD).strip().split(':')
-                    h, m = int(t[0]), int(t[1])
-                    conf.definir_hora(h)
-                    conf.definir_minuto(m)
+                    try:
+                        h, m = int(t[0]), int(t[1])
+                    except ValueError:
+                        print(V_ERROR)
+                    except IndexError:
+                        print('', I_ERROR, sep=_R, end=_0+"\n")
+                    else:
+                        conf.definir_hora(h)
+                        conf.definir_minuto(m)
 
 
 except Exception as err:
