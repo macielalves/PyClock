@@ -8,6 +8,7 @@ except ImportError:
 
 
 CMD = '>>> '
+"""A constante é o indicador de prompt"""
 _R = '\x1b[31m'
 _G = '\x1b[32m'
 _B = '\x1b[34m'
@@ -29,7 +30,7 @@ class Relogio(Thread):
                  horas=0,
                  minutos=0,
                  estado=False) -> None:
-        super().__init__()
+        super().__init__(name="PyClock")
         self.marca_do_relogio = marca
         self.formato_hora = formato
         self.H = horas
@@ -54,19 +55,24 @@ class Relogio(Thread):
             self.S += 1
             time.sleep(1)
 
-    def definir_hora(self, hora: int) -> None:
+    def definir_hora(self, hora):
         self.H = hora
 
-    def definir_minuto(self, minuto: int) -> None:
+    def definir_minuto(self, minuto):
         self.M = minuto
 
-    def definir_segundo(self, segundo: int) -> None:
+    def definir_segundo(self, segundo):
         self.S = segundo
 
     def configurar(self):
         self.configurando = True
 
+    def estado_true(self, f=None):
+        if not self.estado:
+            self.estado = True
+
     def run(self):  # lista de processos a serem iniciados em thread
+        self.estado_true()
         self.atualizar_hora()
 
     def stop(self):
@@ -75,9 +81,8 @@ class Relogio(Thread):
     def resume(self):
         """Liga o contador interno se estiver desligado
         """
-        if not self.estado:
-            self.atualizar_hora()
-            self.estado = True
+        self.estado_true()
+        self.atualizar_hora()
 
     def __str__(self) -> str:
         return self.string_tempo()
@@ -94,11 +99,11 @@ r2.start()
 try:
     while True:
         print(
-            f'{_R}R[1] [{r1}]\nR[2] [{r2}]', end=f"\r\n\n{_0}")
+            f'R[1] {_R}[{r1}]\n{_0}R[2] {_R}[{r2}]', end=f"\r\n\n{_0}")
 
         print(
-            'Digite:'
-            '[1] para configurar o relogio 1, [2] para configurar o relogio 2 ou [q] para sair.'
+            'Digite:',
+            '[1] para configurar o relogio 1, [2] para configurar o relogio 2 ou [q] para sair.', sep="\n"
         )
 
         op = input(CMD).strip()
@@ -106,9 +111,32 @@ try:
             break
 
         if op and op[0] == '1':
-            r1.configurar()
+            conf = r1
         elif op and op[0] == '2':
-            r2.configurar()
+            conf = r2
+        else:
+            conf = None
+
+        if conf is not None:
+            print(conf)
+            print("[h] mudar a hora ")
+            print("[m] mudar os minutos")
+            print("[t] definir hora e minuto")
+            sub_op = input(CMD).strip().lower()
+            if sub_op:
+                if sub_op[0] == 'h':
+                    print("Digite a hora [HH]")
+                    h = int(input(CMD))
+                    conf.definir_hora(h)
+                elif sub_op[0] == 'm':
+                    print("Digite o minuto [MM]")
+                    m = int(input(CMD))
+                elif sub_op[0] == 't':
+                    print("Digite o horário [HH:MM]")
+                    t = input(CMD).strip().split(':')
+                    h, m = int(t[0]), int(t[1])
+                    conf.definir_hora(h)
+                    conf.definir_minuto(m)
 
 
 except Exception as err:
@@ -116,5 +144,6 @@ except Exception as err:
     r2.stop()
     print(err)
 
-r1.stop()
-r2.stop()
+finally:
+    r1.stop()
+    r2.stop()
