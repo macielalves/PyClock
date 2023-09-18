@@ -144,12 +144,19 @@ try:
 
                 elif sub_op[0] == 't':
                     print("Digite o horário [HH:MM]")
-                    t = input(CMD).strip().split(':')
+                    t = input(CMD).strip()
+                    require = ''
+                    if ':' in t:
+                        t.split(':')
+                    else:
+                        require = 'Requer o separador ":" entre HH e MM, HH:MM'
                     try:
                         h, m = int(t[0]), int(t[1])
                     except ValueError:
+                        print(require)
                         print(V_ERROR)
                     except IndexError:
+                        print(require)
                         print('', I_ERROR, sep=_R, end=_0+"\n")
                     else:
                         conf.definir_hora(h)
